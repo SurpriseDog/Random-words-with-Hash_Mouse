@@ -12,11 +12,24 @@ from hashlib import sha512
 from Crypto.Cipher import AES
 from Xlib import display
 hash_width = sys.hash_info.width
-from common import slicer
 
-#Return an 8 byte hash of data (only valid for each program run)
-#Used to test for data integrity between threads.
+
+def slicer(data, *args):
+	#Slice up data into lists of lengths set by args.
+	output = []
+	start = 0
+	stop = 0
+	for arg in args:
+		stop = stop + arg
+		output.append(data[start:stop])
+		start = stop
+	if stop != len(data):
+		print("Warning not all data used!", stop, 'used vs', len(data), 'total')
+	return output
+
 def hash8(data):
+	#Return an 8 byte hash of data (only valid for each program run)
+	#Used to test for data integrity between threads.
 	if hash_width == 64:
 		return hash(data).to_bytes(8, 'big', signed=True)
 	else:
