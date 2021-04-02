@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-#Randomly choose words from a list using hash_mouse to sample the mouse position and time in another thread
-#Usage: ./ranword.py <wordfile>
+# Randomly choose words from a list using HashMouse to sample the mouse position and time in another thread
+# Usage: ./ranword.py <wordfile>
 
 
 from shutil import get_terminal_size
@@ -14,19 +14,23 @@ except ImportError:
 	print("This will limit randomness to that provided by the secrets module (still very good!)")
 	print("To install: sudo apt install python3-xlib")
 	import secrets
-	class Hash_Mouse:
-		def __init__(self, *args, **kargs):
+
+	class HashMouse:
+		'''Replacement HashMouse using the Secrets Library instead'''
+		def __init__(self, **kargs):
 			self.count = 0
+
 		def ensure_min(self, *args):
 			pass
+
 		def randint(self, count):
 			return secrets.randbelow(count)
 else:
-	from hash_mouse import Hash_Mouse
+	from hash_mouse import HashMouse
 
 
 def load_words(filename):
-	#Read the words into a list
+	# Read the words into a list
 	words = []
 	count = 0
 	print("Loading words:", end='')
@@ -42,20 +46,19 @@ def load_words(filename):
 	print()
 	return words
 
-
-
-if __name__ == "__main__":
-	if len(sys.argv) > 1:		
+def main():
+	'''Main Function'''
+	if len(sys.argv) > 1:
 		filename = sys.argv[1]
 	else:
 		filename = '/usr/share/dict/words'
 
 	words = load_words(filename)
 
-	mhash = Hash_Mouse(verbose=0)
+	mhash = HashMouse(verbose=0)
 	mhash.ensure_min(16)
 	print("Ready! Mouse movements will continue to be hashed in the background.")
-	print("The number in the left column shows the sample count")
+	print("The number in the left column shows the mouse sample count")
 
 	print("\n\nPress ctrl+c to quit. ")
 	term_width = get_terminal_size()[0]
@@ -70,5 +73,5 @@ if __name__ == "__main__":
 			print(line)
 			time.sleep(1)
 			line = str(mhash.count)
-		
-	
+
+if __name__ == "__main__": main()
